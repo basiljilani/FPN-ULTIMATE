@@ -103,13 +103,15 @@ const Navbar: React.FC<NavbarProps> = ({ user, onSignOut }) => {
                         >
                           Settings
                         </Link>
-                        <button
-                          onClick={onSignOut}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#8B5CF6] hover:text-white flex items-center"
-                        >
-                          <LogOut className="h-4 w-4 mr-2" />
-                          Sign Out
-                        </button>
+                        {onSignOut && (
+                          <button
+                            onClick={onSignOut}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#8B5CF6] hover:text-white flex items-center"
+                          >
+                            <LogOut className="h-4 w-4 mr-2" />
+                            Sign Out
+                          </button>
+                        )}
                       </>
                     ) : (
                       <Link

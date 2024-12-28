@@ -26,6 +26,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import UserManager from './pages/UserManager';
 import ManageCategories from './pages/ManageCategories';
+import ProtectedRoute from './components/ProtectedRoute';
 import { setupAxios } from './lib/axios.config';
 
 const isProd = import.meta.env.VITE_PROD === 'true';
@@ -64,40 +65,112 @@ function App() {
   }, []);
 
   return (
-    <Authenticator>
-      {({ signOut, user }) => (
-        <Router>
-          <div className="flex flex-col min-h-screen bg-[#0B0F17]">
-            <Navbar user={user} onSignOut={signOut} />
-            <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/insights" element={<Insights />} />
-                <Route path="/fintech-hub" element={<FinTechHub />} />
-                <Route path="/insights/:id" element={<ArticleView />} />
-                <Route path="/ai-companion" element={<AiCompanion />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/community" element={<Community />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/financial-news" element={<FinancialNews />} />
-                <Route path="/admin" element={<AdminLogin />} />
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/users" element={<UserManager />} />
-                <Route path="/admin/categories" element={<ManageCategories />} />
-                <Route path="/admin/articles" element={<ArticleManager />} />
-                <Route path="/admin/create-article" element={<CreateArticle />} />
-                <Route path="/admin/edit-article/:id" element={<EditArticle />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </Router>
-      )}
-    </Authenticator>
+    <Router>
+      <div className="flex flex-col min-h-screen bg-[#0B0F17]">
+        <Navbar />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/insights" element={<Insights />} />
+            <Route path="/fintech-hub" element={<FinTechHub />} />
+            <Route path="/insights/:id" element={<ArticleView />} />
+            <Route path="/ai-companion" element={<AiCompanion />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/financial-news" element={<FinancialNews />} />
+            
+            {/* Protected Routes */}
+            <Route path="/profile" element={
+              <Authenticator>
+                {({ signOut, user }) => (
+                  <ProtectedRoute user={user}>
+                    <Profile />
+                  </ProtectedRoute>
+                )}
+              </Authenticator>
+            } />
+            <Route path="/settings" element={
+              <Authenticator>
+                {({ signOut, user }) => (
+                  <ProtectedRoute user={user}>
+                    <Settings />
+                  </ProtectedRoute>
+                )}
+              </Authenticator>
+            } />
+            <Route path="/dashboard" element={
+              <Authenticator>
+                {({ signOut, user }) => (
+                  <ProtectedRoute user={user}>
+                    <Dashboard />
+                  </ProtectedRoute>
+                )}
+              </Authenticator>
+            } />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={
+              <Authenticator>
+                {({ signOut, user }) => (
+                  <ProtectedRoute user={user} adminOnly>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                )}
+              </Authenticator>
+            } />
+            <Route path="/admin/users" element={
+              <Authenticator>
+                {({ signOut, user }) => (
+                  <ProtectedRoute user={user} adminOnly>
+                    <UserManager />
+                  </ProtectedRoute>
+                )}
+              </Authenticator>
+            } />
+            <Route path="/admin/categories" element={
+              <Authenticator>
+                {({ signOut, user }) => (
+                  <ProtectedRoute user={user} adminOnly>
+                    <ManageCategories />
+                  </ProtectedRoute>
+                )}
+              </Authenticator>
+            } />
+            <Route path="/admin/articles" element={
+              <Authenticator>
+                {({ signOut, user }) => (
+                  <ProtectedRoute user={user} adminOnly>
+                    <ArticleManager />
+                  </ProtectedRoute>
+                )}
+              </Authenticator>
+            } />
+            <Route path="/admin/create-article" element={
+              <Authenticator>
+                {({ signOut, user }) => (
+                  <ProtectedRoute user={user} adminOnly>
+                    <CreateArticle />
+                  </ProtectedRoute>
+                )}
+              </Authenticator>
+            } />
+            <Route path="/admin/edit-article/:id" element={
+              <Authenticator>
+                {({ signOut, user }) => (
+                  <ProtectedRoute user={user} adminOnly>
+                    <EditArticle />
+                  </ProtectedRoute>
+                )}
+              </Authenticator>
+            } />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
