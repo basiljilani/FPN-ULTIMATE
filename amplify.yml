@@ -18,7 +18,7 @@ applications:
           - node_modules/**/*
           - .vite/deps/**/*
           - dist/**/*
-    appRoot: /
+    appRoot: .
   - backend:
       phases:
         build:
