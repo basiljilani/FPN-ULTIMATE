@@ -5,7 +5,12 @@ import { motion } from 'framer-motion';
 import { AuthUser } from '@aws-amplify/ui-react';
 
 interface NavbarProps {
-  user?: AuthUser;
+  user?: {
+    username?: string;
+    attributes?: {
+      email?: string;
+    };
+  };
   onSignOut?: () => void;
 }
 

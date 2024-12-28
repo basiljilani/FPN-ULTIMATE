@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Authenticator, AuthUser } from '@aws-amplify/ui-react';
+import { Authenticator } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import Navbar from './components/Navbar';
@@ -34,7 +34,6 @@ const isProd = import.meta.env.VITE_PROD === 'true';
 Amplify.configure({
   Auth: {
     Cognito: {
-      region: import.meta.env.VITE_AWS_REGION,
       userPoolId: import.meta.env.VITE_AWS_USER_POOL_ID,
       userPoolClientId: import.meta.env.VITE_AWS_USER_POOL_WEB_CLIENT_ID,
       loginWith: {
@@ -55,7 +54,7 @@ Amplify.configure({
 });
 
 interface NavbarProps {
-  user: AuthUser | undefined;
+  user: any;
   onSignOut?: () => void;
 }
 
@@ -66,7 +65,7 @@ function App() {
 
   return (
     <Authenticator>
-      {({ signOut, user }: { signOut?: () => void; user?: AuthUser }) => (
+      {({ signOut, user }) => (
         <Router>
           <div className="flex flex-col min-h-screen bg-[#0B0F17]">
             <Navbar user={user} onSignOut={signOut} />
