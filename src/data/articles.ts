@@ -19,6 +19,7 @@ export interface Article {
   readTime: string;
   category: string;
   author: Author;
+  content: string;
 }
 
 export const categories: Category[] = [
@@ -51,7 +52,8 @@ export const articles: Article[] = [
     author: {
       name: 'Michael Ross',
       role: 'Banking Innovation Lead'
-    }
+    },
+    content: ''
   },
   {
     id: 'defi-lending-platforms',
@@ -63,7 +65,8 @@ export const articles: Article[] = [
     author: {
       name: 'Alex Wong',
       role: 'DeFi Researcher'
-    }
+    },
+    content: ''
   },
   {
     id: 'regtech-solutions',
@@ -75,7 +78,8 @@ export const articles: Article[] = [
     author: {
       name: 'Emma Thompson',
       role: 'Compliance Expert'
-    }
+    },
+    content: ''
   },
   // Additional FinTech Articles
   {
@@ -88,7 +92,8 @@ export const articles: Article[] = [
     author: {
       name: 'Jennifer Lee',
       role: 'Digital Banking Strategist'
-    }
+    },
+    content: ''
   },
   {
     id: 'payment-innovation',
@@ -100,7 +105,8 @@ export const articles: Article[] = [
     author: {
       name: 'Marcus Brown',
       role: 'Payment Systems Expert'
-    }
+    },
+    content: ''
   },
   {
     id: 'fintech-security',
@@ -112,7 +118,8 @@ export const articles: Article[] = [
     author: {
       name: 'Diana Chen',
       role: 'Security Architect'
-    }
+    },
+    content: ''
   },
   // AI/ML Articles
   {
@@ -125,7 +132,8 @@ export const articles: Article[] = [
     author: {
       name: 'David Chen',
       role: 'AI Security Specialist'
-    }
+    },
+    content: ''
   },
   {
     id: 'nlp-financial-analysis',
@@ -137,7 +145,8 @@ export const articles: Article[] = [
     author: {
       name: 'Sarah Johnson',
       role: 'Quantitative Analyst'
-    }
+    },
+    content: ''
   },
   {
     id: 'ml-credit-scoring',
@@ -149,7 +158,8 @@ export const articles: Article[] = [
     author: {
       name: 'James Wilson',
       role: 'Risk Analytics Lead'
-    }
+    },
+    content: ''
   },
   // Additional AI/ML Articles
   {
@@ -162,7 +172,8 @@ export const articles: Article[] = [
     author: {
       name: 'Dr. Michael Zhang',
       role: 'AI Risk Specialist'
-    }
+    },
+    content: ''
   },
   {
     id: 'ml-market-prediction',
@@ -174,7 +185,8 @@ export const articles: Article[] = [
     author: {
       name: 'Dr. Rachel Anderson',
       role: 'ML Research Lead'
-    }
+    },
+    content: ''
   },
   {
     id: 'ai-personal-finance',
@@ -186,7 +198,8 @@ export const articles: Article[] = [
     author: {
       name: 'Sophie Taylor',
       role: 'AI Product Manager'
-    }
+    },
+    content: ''
   },
   // Research/White Papers
   {
@@ -199,7 +212,8 @@ export const articles: Article[] = [
     author: {
       name: 'Dr. Robert Kim',
       role: 'Blockchain Researcher'
-    }
+    },
+    content: ''
   },
   {
     id: 'quantum-finance',
@@ -211,7 +225,8 @@ export const articles: Article[] = [
     author: {
       name: 'Dr. Lisa Zhang',
       role: 'Quantum Computing Scientist'
-    }
+    },
+    content: ''
   },
   {
     id: 'sustainable-fintech',
@@ -223,7 +238,8 @@ export const articles: Article[] = [
     author: {
       name: 'Dr. Maria Garcia',
       role: 'ESG Research Lead'
-    }
+    },
+    content: ''
   },
   // Additional Research/White Papers
   {
@@ -236,7 +252,8 @@ export const articles: Article[] = [
     author: {
       name: 'Dr. Andrew Mitchell',
       role: 'Regulatory Research Lead'
-    }
+    },
+    content: ''
   },
   {
     id: 'financial-inclusion',
@@ -248,7 +265,8 @@ export const articles: Article[] = [
     author: {
       name: 'Dr. Elena Rodriguez',
       role: 'Financial Inclusion Researcher'
-    }
+    },
+    content: ''
   },
   {
     id: 'blockchain-infrastructure',
@@ -260,6 +278,7 @@ export const articles: Article[] = [
     author: {
       name: 'Dr. Kevin Park',
       role: 'Blockchain Research Director'
-    }
+    },
+    content: ''
   }
 ];

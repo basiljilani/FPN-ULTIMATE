@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowLeft, Share2, Lightbulb, CheckCircle2, Target } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, Share2 } from 'lucide-react';
 import { articles, categories } from '../data/articles';
 
 const Article = () => {
@@ -105,65 +105,11 @@ const Article = () => {
           {article.excerpt}
         </p>
 
-        {/* Mock Content Sections */}
+        {/* Main Content */}
         <div className="prose prose-invert max-w-none">
-          <h2 className="text-2xl font-bold mb-6 break-words">Understanding the Impact</h2>
-          <p className="mb-8 text-gray-300 leading-relaxed break-words">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
-
-          <h3 className="text-xl font-bold mb-4">Key Benefits</h3>
-          <ul className="list-disc list-inside mb-8 text-gray-300 space-y-2">
-            <li>Enhanced security and compliance measures</li>
-            <li>Improved operational efficiency</li>
-            <li>Reduced costs and overhead</li>
-            <li>Better user experience and satisfaction</li>
-          </ul>
-
-          <div className="bg-[#1E293B] rounded-2xl p-8 mb-8">
-            <h4 className="text-lg font-bold mb-4">💡 Pro Tip</h4>
-            <p className="text-gray-300">
-              When implementing these solutions, start with a small pilot program to test effectiveness and gather user feedback 
-              before rolling out to the entire organization.
-            </p>
+          <div className="text-gray-300 leading-relaxed break-words">
+            {article.content}
           </div>
-
-          <div className="bg-[#1A1F2E] rounded-lg p-6 mb-8">
-            <div className="flex items-center space-x-2 mb-4">
-              <Target className="w-6 h-6 text-blue-500" />
-              <h2 className="text-xl font-semibold">Implementation Strategy</h2>
-            </div>
-            <div className="text-gray-300">
-              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </div>
-          </div>
-
-          <div className="bg-[#1A1F2E] rounded-lg p-6 mb-8">
-            <div className="flex items-center space-x-2 mb-4">
-              <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-              <h2 className="text-xl font-semibold">Key Takeaways</h2>
-            </div>
-            <ul className="list-disc list-inside space-y-2 text-gray-300">
-              <li>Focus on regulatory compliance from the start</li>
-              <li>Invest in proper training and documentation</li>
-              <li>Regular audits and updates are crucial</li>
-            </ul>
-          </div>
-
-          {/* Pro Tips Section */}
-          {article.proTip && (
-            <div className="bg-[#1A1F2E] rounded-lg p-6 mb-8">
-              <div className="flex items-center space-x-2 mb-4">
-                <Lightbulb className="w-6 h-6 text-yellow-500" />
-                <h2 className="text-xl font-semibold">Pro Tips</h2>
-              </div>
-              <div className="text-gray-300">
-                {article.proTipContent}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Related Articles */}
