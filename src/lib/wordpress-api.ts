@@ -30,9 +30,10 @@ const transformPost = (post: WPPost): Article => ({
   readTime: '5 min', // You might want to calculate this based on content length
   category: 'fintech', // You'll need to map WordPress categories
   author: {
-    name: post._embedded?.author[0]?.name || 'Anonymous',
+    name: post._embedded?.author?.[0]?.name || 'Unknown Author',
     role: 'Contributor'
-  }
+  },
+  content: post.content.rendered
 });
 
 export const wpApi = {
