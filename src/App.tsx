@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -22,8 +22,15 @@ import EditArticle from './pages/EditArticle';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import UserManager from './pages/UserManager';
+import ManageCategories from './pages/ManageCategories';
+import { setupAxios } from './lib/axios.config';
 
 function App() {
+  useEffect(() => {
+    // Set up axios with stored auth token on app start
+    setupAxios();
+  }, []);
+
   return (
     <Router>
       <div className="flex flex-col min-h-screen bg-[#0B0F17]">
@@ -46,6 +53,7 @@ function App() {
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManager />} />
+            <Route path="/admin/categories" element={<ManageCategories />} />
             <Route path="/admin/articles" element={<ArticleManager />} />
             <Route path="/admin/create-article" element={<CreateArticle />} />
             <Route path="/admin/edit-article/:id" element={<EditArticle />} />

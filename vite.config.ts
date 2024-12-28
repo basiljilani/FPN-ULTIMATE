@@ -22,6 +22,6 @@ export default defineConfig({
   },
   base: '/',
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', '@aws-amplify/ui-react'],
+    include: ['react', 'react-dom', 'react-router-dom'],
   },
 });

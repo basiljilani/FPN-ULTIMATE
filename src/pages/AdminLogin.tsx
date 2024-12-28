@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Activity } from 'lucide-react';
+import { Activity, Eye, EyeOff } from 'lucide-react';
+import axiosInstance, { setupAxios } from '../lib/axios.config';
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -9,6 +9,7 @@ const AdminLogin: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,50 +17,65 @@ const AdminLogin: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // For now, we'll do a simple credential check
-      if (email === 'basiljilani@gmail.com' && password === 'fpn123@123') {
-        // Admin login successful
-        navigate('/admin/dashboard');
-      } else if (email.includes('@') && password.length >= 6) {
-        // Author/Editor login (to be replaced with actual API call)
-        navigate('/admin/articles');
-      } else {
-        setError('Invalid credentials');
+      console.log('Login attempt:', { email });
+
+      const response = await axiosInstance.post('/users/login', {
+        email,
+        password
+      });
+
+      console.log('Login successful:', {
+        token: response.data.token ? 'present' : 'missing',
+        user: response.data.user
+      });
+
+      const { token, user } = response.data;
+      
+      if (!token) {
+        throw new Error('No token received from server');
       }
-    } catch (err) {
-      setError('Login failed. Please try again.');
+      
+      // Set up axios with the new token
+      setupAxios(token);
+      
+      // Navigate based on user role
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else {
+        setError('You must be an admin to access this area');
+      }
+    } catch (err: any) {
+      console.error('Login error details:', {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message
+      });
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#0B0F17] flex flex-col justify-center items-center px-4">
-      <div className="mb-8 text-center">
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [1, 0.5, 1]
-          }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="inline-block"
-        >
-          <Activity className="h-12 w-12 text-indigo-400 mx-auto" />
-        </motion.div>
-        <h1 className="mt-4 text-2xl font-bold text-white">
-          FinTech Pulse Network
-        </h1>
-        <p className="mt-2 text-gray-400">Admin Portal</p>
-      </div>
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
-      <div className="w-full max-w-md">
-        <form onSubmit={handleLogin} className="bg-gray-800/50 rounded-lg shadow-xl p-8">
-          <div className="mb-6">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+  return (
+    <div className="min-h-screen bg-[#0B0F17] flex items-center justify-center">
+      <div className="bg-[#1A1E2C] p-8 rounded-lg shadow-lg w-96">
+        <div className="flex flex-col items-center justify-center mb-6">
+          <Activity className="w-12 h-12 text-blue-500 mb-4" />
+          <h1 className="text-2xl font-bold text-white">FinTech Pulse Network</h1>
+          <h2 className="text-lg text-gray-400">Admin Portal</h2>
+        </div>
+        {error && (
+          <div className="bg-red-500/10 border border-red-500 text-red-500 p-3 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
               Email Address
             </label>
             <input
@@ -67,43 +83,46 @@ const AdminLogin: React.FC = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-0 focus:border-indigo-500"
-              placeholder="Enter your email"
+              className="w-full px-3 py-2 bg-[#2A2E3C] rounded border border-gray-700 text-white focus:outline-none focus:border-blue-500"
               required
             />
           </div>
-
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-0 focus:border-indigo-500"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-
-          {error && (
-            <div className="mb-6 text-red-400 text-sm text-center">
-              {error}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 bg-[#2A2E3C] rounded border border-gray-700 text-white focus:outline-none focus:border-blue-500 pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
             </div>
-          )}
-
+          </div>
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-2 px-4 rounded-md text-white font-medium transition-colors ${
-              isLoading
-                ? 'bg-indigo-500/50 cursor-not-allowed'
-                : 'bg-indigo-500 hover:bg-indigo-600'
-            }`}
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? (
+              <Activity className="w-5 h-5 animate-spin" />
+            ) : (
+              'Sign In'
+            )}
           </button>
         </form>
       </div>

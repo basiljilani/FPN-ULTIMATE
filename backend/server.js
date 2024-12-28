@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import articlesRouter from './routes/articles.js';
 import usersRouter from './routes/users.js';
+import categoryRoutes from './routes/categories.js';
 
 dotenv.config();
 
@@ -12,7 +13,11 @@ const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    process.env.FRONTEND_URL // Amplify app URL
+  ].filter(Boolean),
   credentials: true
 }));
 app.use(express.json());
@@ -33,6 +38,7 @@ connectDB().then(() => {
   // Routes
   app.use('/api/articles', articlesRouter);
   app.use('/api/users', usersRouter);
+  app.use('/api/categories', categoryRoutes);
 
   // Basic route for testing
   app.get('/', (req, res) => {

@@ -57,15 +57,20 @@ router.delete('/:id', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Login attempt for email:', email);
     
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('User not found:', email);
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+    console.log('User found:', { email: user.email, role: user.role });
 
     // Check password
     const isMatch = await user.comparePassword(password);
+    console.log('Password match:', isMatch);
+    
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -81,11 +86,13 @@ router.post('/login', async (req, res) => {
     const userResponse = user.toObject();
     delete userResponse.password;
 
+    console.log('Login successful:', { email: user.email, role: user.role });
     res.json({
       token,
       user: userResponse
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: error.message });
   }
 });

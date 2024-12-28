@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Clock, Landmark, Brain, FileText } from 'lucide-react';
+import { 
+  Search, 
+  Clock, 
+  Landmark, 
+  Brain, 
+  FileText, 
+  Shield, 
+  Coins, 
+  Wallet, 
+  CreditCard, 
+  PieChart, 
+  LineChart, 
+  BarChart, 
+  DollarSign, 
+  Bitcoin, 
+  Building, 
+  Network 
+} from 'lucide-react';
 import { API_URL } from '../config/apiConfig';
 import axios from 'axios';
 
@@ -18,15 +35,47 @@ interface Article {
   };
 }
 
-const CATEGORIES = [
+interface Category {
+  id: string;
+  name: string;
+  displayName: string;
+  description: string;
+  icon: string | null;
+}
+
+const DEFAULT_CATEGORIES = [
   { id: 'all', name: 'All', icon: null },
-  { id: 'fintech', name: 'FinTech', icon: Landmark },
-  { id: 'ai', name: 'AI / ML', icon: Brain },
-  { id: 'research', name: 'Research / White Papers', icon: FileText },
+  { id: 'fintech', name: 'FinTech', icon: 'Landmark' },
+  { id: 'ai-ml', name: 'AI / ML', icon: 'Brain' },
+  { id: 'research', name: 'Research / White Papers', icon: 'FileText' },
 ];
+
+const ICON_COMPONENTS = {
+  Landmark,
+  Brain,
+  FileText,
+  Shield,
+  Coins,
+  Wallet,
+  CreditCard,
+  PieChart,
+  LineChart,
+  BarChart,
+  DollarSign,
+  Bitcoin,
+  Building,
+  Network
+};
+
+const IconComponent = ({ iconName }: { iconName: string | null }) => {
+  if (!iconName || !ICON_COMPONENTS[iconName as keyof typeof ICON_COMPONENTS]) return null;
+  const Icon = ICON_COMPONENTS[iconName as keyof typeof ICON_COMPONENTS];
+  return <Icon className="w-4 h-4" />;
+};
 
 const Insights: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [additionalCategories, setAdditionalCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
@@ -34,6 +83,7 @@ const Insights: React.FC = () => {
 
   useEffect(() => {
     fetchArticles();
+    fetchAdditionalCategories();
   }, []);
 
   const fetchArticles = async () => {
@@ -48,8 +98,17 @@ const Insights: React.FC = () => {
     }
   };
 
+  const fetchAdditionalCategories = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/categories`);
+      setAdditionalCategories(response.data);
+    } catch (err) {
+      console.error('Error fetching additional categories:', err);
+    }
+  };
+
   const filteredArticles = articles.filter(article => {
-    const matchesCategory = selectedCategory === 'all' || article.category.toLowerCase() === selectedCategory;
+    const matchesCategory = selectedCategory === 'all' || article.category === selectedCategory;
     const matchesSearch = searchQuery === '' || 
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
@@ -102,22 +161,35 @@ const Insights: React.FC = () => {
       <div className="px-6 mb-12">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap gap-3">
-            {CATEGORIES.map((category) => {
-              const Icon = category.icon;
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all
-                    ${selectedCategory === category.id 
-                      ? 'bg-[#7C3AED] text-white' 
-                      : 'bg-[#1A1F2E] text-gray-400 hover:bg-[#2A2F3E]'}`}
-                >
-                  {Icon && <Icon className="w-4 h-4" />}
-                  {category.name}
-                </button>
-              );
-            })}
+            {/* Default Categories */}
+            {DEFAULT_CATEGORIES.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-all
+                  ${selectedCategory === category.id 
+                    ? 'bg-[#4763E4] text-white' 
+                    : 'bg-[#1A1F2E] text-gray-400 hover:bg-[#2A2F3E]'}`}
+              >
+                {category.icon && <IconComponent iconName={category.icon} />}
+                {category.name}
+              </button>
+            ))}
+
+            {/* Additional Categories from API */}
+            {additionalCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-all
+                  ${selectedCategory === category.id 
+                    ? 'bg-[#4763E4] text-white' 
+                    : 'bg-[#1A1F2E] text-gray-400 hover:bg-[#2A2F3E]'}`}
+              >
+                {category.icon && <IconComponent iconName={category.icon} />}
+                {category.name}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -134,8 +206,11 @@ const Insights: React.FC = () => {
               >
                 <div className="flex flex-col h-full">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="bg-[#7C3AED]/20 text-[#7C3AED] px-3 py-1 rounded-full text-sm font-medium truncate">
-                      {article.category}
+                    <span className="bg-[#1E293B] text-[#4763E4] px-3 py-1 rounded-lg text-sm font-medium truncate">
+                      {article.category === 'fintech' ? 'FinTech' :
+                       article.category === 'ai-ml' ? 'AI / ML' :
+                       article.category === 'research' ? 'Research / White Papers' :
+                       article.category}
                     </span>
                     <span className="flex items-center text-gray-400 text-sm whitespace-nowrap">
                       <Clock className="w-4 h-4 mr-1" />
@@ -143,7 +218,7 @@ const Insights: React.FC = () => {
                     </span>
                   </div>
                   
-                  <h2 className="text-xl font-semibold text-white mb-3 group-hover:text-[#7C3AED] transition-colors line-clamp-2">
+                  <h2 className="text-xl font-semibold text-white mb-3 group-hover:text-[#4763E4] transition-colors line-clamp-2">
                     {article.title}
                   </h2>
                   

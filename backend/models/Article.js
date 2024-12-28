@@ -18,7 +18,7 @@ const articleSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Category is required'],
     enum: {
-      values: ['fintech', 'ai-ml', 'research'],
+      values: ['FinTech', 'AI / ML', 'Research / White Papers'],
       message: '{VALUE} is not a valid category'
     }
   },
