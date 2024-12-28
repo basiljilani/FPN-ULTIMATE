@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Activity, UserCircle, Settings, Users, Lightbulb, Cpu } from 'lucide-react';
+import { Menu, X, Activity, UserCircle, Settings, Users, Lightbulb, Cpu, LogOut } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { AuthUser } from '@aws-amplify/ui-react';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  user?: AuthUser;
+  onSignOut?: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ user, onSignOut }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -22,7 +28,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="fixed w-full z-50 transition-all duration-300 bg-gray-900">
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-[#0B0F17] shadow-lg' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -61,22 +67,54 @@ const Navbar: React.FC = () => {
               <Users className="h-4 w-4 mr-1" />
               Community
             </Link>
-            <div className="relative">
+            <div className="relative ml-4">
               <button
                 onClick={handleProfileClick}
-                className="flex items-center text-white hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium"
+                className="flex items-center space-x-2 text-white hover:text-[#8B5CF6] transition-colors"
               >
                 <UserCircle className="h-6 w-6" />
+                {user?.username && (
+                  <span className="hidden md:inline">{user.username}</span>
+                )}
               </button>
+
               {showProfileMenu && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-900 ring-1 ring-black ring-opacity-5"
+                  className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-[#0B0F17] ring-1 ring-black ring-opacity-5"
                 >
                   <div className="py-1">
-                    <Link to="/profile" className="block px-4 py-2 text-sm text-white hover:bg-gray-800">Profile</Link>
-                    <Link to="/settings" className="block px-4 py-2 text-sm text-white hover:bg-gray-800">Settings</Link>
+                    {user ? (
+                      <>
+                        <Link
+                          to="/profile"
+                          className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#8B5CF6] hover:text-white"
+                        >
+                          Profile
+                        </Link>
+                        <Link
+                          to="/settings"
+                          className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#8B5CF6] hover:text-white"
+                        >
+                          Settings
+                        </Link>
+                        <button
+                          onClick={onSignOut}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#8B5CF6] hover:text-white flex items-center"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Sign Out
+                        </button>
+                      </>
+                    ) : (
+                      <Link
+                        to="/login"
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#8B5CF6] hover:text-white"
+                      >
+                        Sign In
+                      </Link>
+                    )}
                   </div>
                 </motion.div>
               )}

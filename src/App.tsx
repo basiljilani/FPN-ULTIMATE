@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Authenticator } from '@aws-amplify/ui-react';
+import { Authenticator, AuthUser } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import Navbar from './components/Navbar';
@@ -54,6 +54,11 @@ Amplify.configure({
   }
 });
 
+interface NavbarProps {
+  user: AuthUser | undefined;
+  onSignOut?: () => void;
+}
+
 function App() {
   useEffect(() => {
     setupAxios();
@@ -61,7 +66,7 @@ function App() {
 
   return (
     <Authenticator>
-      {({ signOut, user }) => (
+      {({ signOut, user }: { signOut?: () => void; user?: AuthUser }) => (
         <Router>
           <div className="flex flex-col min-h-screen bg-[#0B0F17]">
             <Navbar user={user} onSignOut={signOut} />
