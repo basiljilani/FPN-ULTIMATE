@@ -27,6 +27,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import UserManager from './pages/UserManager';
 import ManageCategories from './pages/ManageCategories';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminLayout from './components/AdminLayout';
 import { setupAxios } from './lib/axios.config';
 
 const isProd = import.meta.env.VITE_PROD === 'true';
@@ -64,12 +65,25 @@ function App() {
     setupAxios();
   }, []);
 
+  const AdminRoute = ({ element }: { element: React.ReactNode }) => (
+    <Authenticator>
+      {({ signOut, user }) => (
+        <ProtectedRoute user={user} adminOnly>
+          <AdminLayout>
+            {element}
+          </AdminLayout>
+        </ProtectedRoute>
+      )}
+    </Authenticator>
+  );
+
   return (
     <Router>
       <div className="flex flex-col min-h-screen bg-[#0B0F17]">
         <Navbar />
         <main className="flex-grow">
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/insights" element={<Insights />} />
@@ -112,60 +126,12 @@ function App() {
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={
-              <Authenticator>
-                {({ signOut, user }) => (
-                  <ProtectedRoute user={user} adminOnly>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                )}
-              </Authenticator>
-            } />
-            <Route path="/admin/users" element={
-              <Authenticator>
-                {({ signOut, user }) => (
-                  <ProtectedRoute user={user} adminOnly>
-                    <UserManager />
-                  </ProtectedRoute>
-                )}
-              </Authenticator>
-            } />
-            <Route path="/admin/categories" element={
-              <Authenticator>
-                {({ signOut, user }) => (
-                  <ProtectedRoute user={user} adminOnly>
-                    <ManageCategories />
-                  </ProtectedRoute>
-                )}
-              </Authenticator>
-            } />
-            <Route path="/admin/articles" element={
-              <Authenticator>
-                {({ signOut, user }) => (
-                  <ProtectedRoute user={user} adminOnly>
-                    <ArticleManager />
-                  </ProtectedRoute>
-                )}
-              </Authenticator>
-            } />
-            <Route path="/admin/create-article" element={
-              <Authenticator>
-                {({ signOut, user }) => (
-                  <ProtectedRoute user={user} adminOnly>
-                    <CreateArticle />
-                  </ProtectedRoute>
-                )}
-              </Authenticator>
-            } />
-            <Route path="/admin/edit-article/:id" element={
-              <Authenticator>
-                {({ signOut, user }) => (
-                  <ProtectedRoute user={user} adminOnly>
-                    <EditArticle />
-                  </ProtectedRoute>
-                )}
-              </Authenticator>
-            } />
+            <Route path="/admin/dashboard" element={<AdminRoute element={<AdminDashboard />} />} />
+            <Route path="/admin/users" element={<AdminRoute element={<UserManager />} />} />
+            <Route path="/admin/categories" element={<AdminRoute element={<ManageCategories />} />} />
+            <Route path="/admin/articles" element={<AdminRoute element={<ArticleManager />} />} />
+            <Route path="/admin/create-article" element={<AdminRoute element={<CreateArticle />} />} />
+            <Route path="/admin/edit-article/:id" element={<AdminRoute element={<EditArticle />} />} />
           </Routes>
         </main>
         <Footer />
