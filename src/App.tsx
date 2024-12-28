@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Authenticator } from '@aws-amplify/ui-react';
+import { Amplify } from 'aws-amplify';
+import '@aws-amplify/ui-react/styles.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -25,43 +28,72 @@ import UserManager from './pages/UserManager';
 import ManageCategories from './pages/ManageCategories';
 import { setupAxios } from './lib/axios.config';
 
+const isProd = import.meta.env.VITE_PROD === 'true';
+
+// Configure Amplify
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      region: import.meta.env.VITE_AWS_REGION,
+      userPoolId: import.meta.env.VITE_AWS_USER_POOL_ID,
+      userPoolClientId: import.meta.env.VITE_AWS_USER_POOL_WEB_CLIENT_ID,
+      loginWith: {
+        oauth: {
+          domain: 'us-east-1gmmabocdr.auth.us-east-1.amazoncognito.com',
+          scopes: ['email', 'openid', 'profile'],
+          redirectSignIn: isProd 
+            ? ['https://d84l1y8p4kdic.cloudfront.net']
+            : ['http://localhost:5001'],
+          redirectSignOut: isProd
+            ? ['https://d84l1y8p4kdic.cloudfront.net']
+            : ['http://localhost:5001'],
+          responseType: 'code'
+        }
+      }
+    }
+  }
+});
+
 function App() {
   useEffect(() => {
-    // Set up axios with stored auth token on app start
     setupAxios();
   }, []);
 
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen bg-[#0B0F17]">
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/insights" element={<Insights />} />
-            <Route path="/fintech-hub" element={<FinTechHub />} />
-            <Route path="/insights/:id" element={<ArticleView />} />
-            <Route path="/ai-companion" element={<AiCompanion />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/financial-news" element={<FinancialNews />} />
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/users" element={<UserManager />} />
-            <Route path="/admin/categories" element={<ManageCategories />} />
-            <Route path="/admin/articles" element={<ArticleManager />} />
-            <Route path="/admin/create-article" element={<CreateArticle />} />
-            <Route path="/admin/edit-article/:id" element={<EditArticle />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <Authenticator>
+      {({ signOut, user }) => (
+        <Router>
+          <div className="flex flex-col min-h-screen bg-[#0B0F17]">
+            <Navbar user={user} onSignOut={signOut} />
+            <main className="flex-grow">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/insights" element={<Insights />} />
+                <Route path="/fintech-hub" element={<FinTechHub />} />
+                <Route path="/insights/:id" element={<ArticleView />} />
+                <Route path="/ai-companion" element={<AiCompanion />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/community" element={<Community />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/financial-news" element={<FinancialNews />} />
+                <Route path="/admin" element={<AdminLogin />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/users" element={<UserManager />} />
+                <Route path="/admin/categories" element={<ManageCategories />} />
+                <Route path="/admin/articles" element={<ArticleManager />} />
+                <Route path="/admin/create-article" element={<CreateArticle />} />
+                <Route path="/admin/edit-article/:id" element={<EditArticle />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      )}
+    </Authenticator>
   );
 }
 
