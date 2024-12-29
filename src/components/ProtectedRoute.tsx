@@ -1,31 +1,35 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuthenticator } from '@aws-amplify/ui-react';
+import { CognitoUser, UserRole, ROLE_PERMISSIONS } from '../types/auth';
 
 interface ProtectedRouteProps {
-  user?: {
-    username?: string;
-    attributes?: {
-      email?: string;
-      'custom:role'?: string;
-    };
-  };
   children: React.ReactNode;
-  adminOnly?: boolean;
+  requiredRole: UserRole;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  user, 
   children, 
-  adminOnly = false 
+  requiredRole 
 }) => {
-  if (!user) {
-    // Not logged in, redirect to home page
-    return <Navigate to="/" replace />;
+  const location = useLocation();
+  const { user } = useAuthenticator((context) => [context.user]);
+  const cognitoUser = user as CognitoUser | undefined;
+
+  if (!cognitoUser) {
+    // Redirect to the appropriate portal based on the required role
+    return <Navigate to={`/${requiredRole}`} state={{ from: location }} replace />;
   }
 
-  if (adminOnly && user.attributes?.['custom:role'] !== 'admin') {
-    // Not an admin, redirect to home page
-    return <Navigate to="/" replace />;
+  const userRole = cognitoUser.attributes?.['custom:role'] as UserRole;
+  
+  // Check if user has permission to access this route
+  const userPermissions = ROLE_PERMISSIONS[userRole] || [];
+  const requiredPath = `/${requiredRole}`;
+  
+  if (!userPermissions.includes(requiredPath)) {
+    // If user doesn't have permission, redirect to their default portal
+    return <Navigate to={`/${userRole}`} replace />;
   }
 
   // Authorized, render children
